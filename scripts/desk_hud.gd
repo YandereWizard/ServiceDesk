@@ -36,9 +36,9 @@ var _ring_pulse: float = 0.0
 var _shake_time: float = 0.0
 var _cached_grade: Dictionary = {}
 
-# Systems
-var _voice: Node  # CallVoice
-var _av: Node  # PlayerAV
+# Systems — typed so Godot 4.1+ can infer method return types (no Variant :=)
+var _voice: CallVoice
+var _av: PlayerAV
 
 # Chrome
 var _stress_bar: ProgressBar
@@ -85,8 +85,8 @@ var _softphone_label: Label
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	_voice = preload("res://scripts/call_voice.gd").new()
-	_av = preload("res://scripts/player_av.gd").new()
+	_voice = CallVoice.new()
+	_av = PlayerAV.new()
 	add_child(_voice)
 	add_child(_av)
 	_build_ui()
@@ -502,7 +502,8 @@ func _show_grade_card(grade: Dictionary) -> void:
 func _speak_line(line_id: String, text: String) -> void:
 	if line_id == "" or text == "":
 		return
-	var baked := _voice.speak(line_id, text)
+	# Explicit bool: 4.1 rejects := when the callee type was only Node (Variant return).
+	var baked: bool = _voice.speak(line_id, text)
 	if baked:
 		_voice_status.text = "♪ Playing baked line · %s" % line_id
 	elif _voice.has_clip(line_id):
@@ -1042,9 +1043,9 @@ func _style_primary_button(btn: Button) -> void:
 	normal.content_margin_right = 12
 	normal.content_margin_top = 6
 	normal.content_margin_bottom = 6
-	var hover := normal.duplicate()
+	var hover: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	hover.bg_color = ACCENT.lightened(0.1)
-	var pressed := normal.duplicate()
+	var pressed: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	pressed.bg_color = ACCENT.darkened(0.1)
 	btn.add_theme_stylebox_override("normal", normal)
 	btn.add_theme_stylebox_override("hover", hover)
@@ -1065,7 +1066,7 @@ func _style_ghost_button(btn: Button) -> void:
 	normal.content_margin_right = 10
 	normal.content_margin_top = 4
 	normal.content_margin_bottom = 4
-	var hover := normal.duplicate()
+	var hover: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	hover.border_color = AMBER
 	btn.add_theme_stylebox_override("normal", normal)
 	btn.add_theme_stylebox_override("hover", hover)
@@ -1084,7 +1085,7 @@ func _style_choice_button(btn: Button) -> void:
 	normal.content_margin_right = 12
 	normal.content_margin_top = 10
 	normal.content_margin_bottom = 10
-	var hover := normal.duplicate()
+	var hover: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	hover.border_color = ACCENT
 	hover.bg_color = Color(0.14, 0.22, 0.28)
 	btn.add_theme_stylebox_override("normal", normal)
@@ -1108,7 +1109,7 @@ func _style_line_edit(edit: LineEdit) -> void:
 	sb.content_margin_top = 8
 	sb.content_margin_bottom = 8
 	edit.add_theme_stylebox_override("normal", sb)
-	var focus := sb.duplicate()
+	var focus: StyleBoxFlat = sb.duplicate() as StyleBoxFlat
 	focus.border_color = ACCENT
 	edit.add_theme_stylebox_override("focus", focus)
 	edit.add_theme_color_override("font_color", TEXT)

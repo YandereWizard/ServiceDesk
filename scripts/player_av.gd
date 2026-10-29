@@ -1,4 +1,5 @@
 extends Node
+class_name PlayerAV
 ## Opt-in webcam + mic scaffolding. Never blocks play if devices are missing.
 ## Name-check STT is a stub: push-to-talk records locally; typed entry always works.
 
@@ -54,7 +55,7 @@ func set_mic_enabled(enabled: bool) -> void:
 		stop_push_to_talk()
 		mic_status_changed.emit(false, "Mic off — type the name instead")
 	else:
-		var ok := _mic_available()
+		var ok: bool = _mic_available()
 		if ok:
 			mic_status_changed.emit(true, "Mic ready — hold Push-to-Talk")
 		else:
@@ -134,7 +135,7 @@ func _ensure_record_bus() -> void:
 	var effect_count := AudioServer.get_bus_effect_count(idx)
 	_record_effect = null
 	for i in effect_count:
-		var fx := AudioServer.get_bus_effect(idx, i)
+		var fx: AudioEffect = AudioServer.get_bus_effect(idx, i)
 		if fx is AudioEffectRecord:
 			_record_effect = fx as AudioEffectRecord
 			break
