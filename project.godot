@@ -5,7 +5,7 @@ config_version=5
 [application]
 config/name="Service Desk"
 config/description="Workplace comedy helpdesk: take the call, type the name, fix the mess, get graded."
-config/version="0.2.0-demo"
+config/version="0.3.0-demo"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
@@ -15,6 +15,8 @@ driver/enable_input=true
 
 [autoload]
 GameState="*res://scripts/game_state.gd"
+UserSettings="*res://scripts/user_settings.gd"
+SecondDisplay="*res://scripts/second_display.gd"
 
 [display]
 window/size/viewport_width=1280
@@ -23,6 +25,7 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/subwindows/embed_subwindows=false
 
 [input]
 ui_accept={

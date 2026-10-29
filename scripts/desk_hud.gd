@@ -82,6 +82,10 @@ var _cam_toggle: CheckButton
 var _mic_toggle: CheckButton
 var _softphone_label: Label
 
+# Settings
+var _settings: CanvasLayer
+var _settings_btn: Button
+
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
@@ -90,6 +94,9 @@ func _ready() -> void:
 	add_child(_voice)
 	add_child(_av)
 	_build_ui()
+	_settings = preload("res://scripts/settings_panel.gd").new()
+	_settings.visible = false
+	add_child(_settings)
 	_av.set_preview_target(_cam_preview)
 	_av.camera_status_changed.connect(_on_camera_status)
 	_av.mic_status_changed.connect(_on_mic_status)
@@ -109,6 +116,15 @@ func _exit_tree() -> void:
 		_av.shutdown()
 	if _voice:
 		_voice.stop()
+	SecondDisplay.clear_call_context()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		if _settings and _settings.visible:
+			return  # settings_panel handles Esc to close
+		_open_settings()
+		get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
@@ -182,6 +198,21 @@ func _populate_ticket() -> void:
 		"font_color", ACCENT if voice_kind == "AI" else MUTED
 	)
 	_softphone_label.text = "Softphone · %s" % str(_call.get("ticket_id", "—"))
+	_sync_second_display()
+
+
+func _sync_second_display() -> void:
+	if _call.is_empty():
+		SecondDisplay.clear_call_context()
+		return
+	var phase_name := _phase_label.text if _phase_label else "IDLE"
+	SecondDisplay.update_call_context(
+		str(_call.get("ticket_id", "—")),
+		str(_call.get("caller_name", "—")),
+		str(_call.get("subject", "")),
+		phase_name,
+		str(_call.get("department", ""))
+	)
 
 
 # --- Phases -----------------------------------------------------------------
@@ -190,6 +221,7 @@ func _enter_ring() -> void:
 	_phase = Phase.RING
 	_phase_label.text = "INCOMING"
 	_phase_label.add_theme_color_override("font_color", AMBER)
+	_sync_second_display()
 	_set_incoming_ringing(true)
 	var ring: Dictionary = _call.get("ring", {})
 	_set_dialogue(
@@ -260,6 +292,7 @@ func _enter_name_check() -> void:
 	_phase = Phase.NAME_CHECK
 	_phase_label.text = "NAME CHECK"
 	_phase_label.add_theme_color_override("font_color", ACCENT)
+	_sync_second_display()
 	var nc: Dictionary = _call.get("name_check", {})
 	_set_dialogue(str(nc.get("hint", "Type the caller name.")))
 	_name_row.visible = true
@@ -310,6 +343,7 @@ func _enter_diagnose() -> void:
 	_phase = Phase.DIAGNOSE
 	_phase_label.text = "DIAGNOSE"
 	_phase_label.add_theme_color_override("font_color", ACCENT)
+	_sync_second_display()
 	var diag: Dictionary = _call.get("diagnose", {})
 	_set_dialogue(str(diag.get("prompt", "What's going on?")))
 	_clear_container(_choices)
@@ -350,6 +384,7 @@ func _enter_resolve() -> void:
 	_phase = Phase.RESOLVE
 	_phase_label.text = "RESOLVE"
 	_phase_label.add_theme_color_override("font_color", ACCENT)
+	_sync_second_display()
 	var res: Dictionary = _call.get("resolve", {})
 	_set_dialogue(str(res.get("prompt", "Fix it.")))
 	_clear_container(_checklist)
@@ -412,6 +447,7 @@ func _enter_grade() -> void:
 	_voice.stop()
 	_phase_label.text = "GRADE"
 	_phase_label.add_theme_color_override("font_color", AMBER)
+	_sync_second_display()
 	_incoming_title.text = "CALL CLOSED"
 	_incoming_sub.text = "Awaiting ticket review"
 	var grade := _compute_grade()
@@ -658,8 +694,22 @@ func _build_top_bar() -> Control:
 	mid.add_child(stress_box)
 	bar.add_child(mid)
 
+	_settings_btn = Button.new()
+	_settings_btn.text = "Settings"
+	_settings_btn.tooltip_text = "Settings (Esc) — second window / dual display"
+	_settings_btn.custom_minimum_size = Vector2(84, 40)
+	_style_ghost_button(_settings_btn)
+	_settings_btn.add_theme_font_size_override("font_size", 12)
+	_settings_btn.pressed.connect(_open_settings)
+	bar.add_child(_settings_btn)
+
 	bar.add_child(_build_incoming_control())
 	return bar
+
+
+func _open_settings() -> void:
+	if _settings and _settings.has_method("open"):
+		_settings.open()
 
 
 func _build_incoming_control() -> Control:
@@ -1160,6 +1210,8 @@ func _on_shift_failed() -> void:
 	_set_incoming_ringing(false)
 	_incoming_title.text = "SHIFT FAILED"
 	_incoming_sub.text = "Manager override"
+	_phase_label.text = "FAILED"
+	_sync_second_display()
 	_set_dialogue(
 		"[color=#d94c4c][b]MANAGER OVERRIDE[/b]\nStress hit 100. Shift failed.\nGo touch grass, then clock in again.[/color]"
 	)
