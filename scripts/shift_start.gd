@@ -76,7 +76,7 @@ func _build_ui() -> void:
 	center.add_child(start_btn)
 
 	var note := Label.new()
-	note.text = "Demo Day 1 · Password Purge (text-only)"
+	note.text = "Demo · Password Purge · baked AI voice + desk AV"
 	note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	note.add_theme_font_size_override("font_size", 14)
 	note.add_theme_color_override("font_color", AMBER)
