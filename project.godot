@@ -1,14 +1,17 @@
 ; Engine configuration file.
-; Godot 4 — Service Desk demo (Demo Day 1 vertical slice)
+; Godot 4 — Service Desk demo (desk HUD + baked AI voice + AV scaffolding)
 config_version=5
 
 [application]
 config/name="Service Desk"
 config/description="Workplace comedy helpdesk: take the call, type the name, fix the mess, get graded."
-config/version="0.1.0-demo"
+config/version="0.2.0-demo"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[audio]
+driver/enable_input=true
 
 [autoload]
 GameState="*res://scripts/game_state.gd"
@@ -30,4 +33,4 @@ ui_accept={
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.12, 0.14, 0.16, 1)
+environment/defaults/default_clear_color=Color(0.07, 0.09, 0.11, 1)
