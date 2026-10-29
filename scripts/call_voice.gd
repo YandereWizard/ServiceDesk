@@ -1,4 +1,5 @@
 extends Node
+class_name CallVoice
 ## Baked TTS playback for call graphs. Prefer OGG/WAV under audio/calls/<id>/;
 ## fall back to text-only + optional OS TTS. No runtime API keys.
 

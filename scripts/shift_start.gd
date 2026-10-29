@@ -91,9 +91,9 @@ func _style_primary_button(btn: Button) -> void:
 	normal.content_margin_right = 20
 	normal.content_margin_top = 10
 	normal.content_margin_bottom = 10
-	var hover := normal.duplicate()
+	var hover: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	hover.bg_color = ACCENT.lightened(0.12)
-	var pressed := normal.duplicate()
+	var pressed: StyleBoxFlat = normal.duplicate() as StyleBoxFlat
 	pressed.bg_color = ACCENT.darkened(0.1)
 	btn.add_theme_stylebox_override("normal", normal)
 	btn.add_theme_stylebox_override("hover", hover)

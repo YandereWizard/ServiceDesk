@@ -6,7 +6,7 @@ Workplace comedy helpdesk game — take the call, type the caller name, diagnose
 
 ## Requirements
 
-- [Godot 4.3+](https://godotengine.org/download) (4.3 or 4.4 recommended)
+- [Godot 4.3+](https://godotengine.org/download) recommended (project hint is `4.3`; scripts stay compatible with **4.1–4.7**)
 - Keyboard + mouse
 - Optional: webcam / mic (opt-in; never required)
 - Optional for VO bake: `espeak-ng` + `ffmpeg`, or Piper / ElevenLabs / OpenAI (dev machine only)

@@ -1,5 +1,6 @@
 ; Engine configuration file.
 ; Godot 4 — Service Desk demo (desk HUD + baked AI voice + AV scaffolding)
+; Feature tag "4.3" = recommended editor; GDScript kept compatible with 4.1+.
 config_version=5
 
 [application]
