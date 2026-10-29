@@ -50,6 +50,28 @@ python3 tools/generate_call_tts.py data/calls/password_purge.json \
 
 If a clip is missing, captions still show; OS TTS may speak if the host exposes voices.
 
+## Second window / dual display
+
+Fantasy: primary screen = softphone + ticket workspace; second OS window = **Northwave Knowledge Base** (SOP glance board + live ticket mirror).
+
+### How to try it
+
+1. **F5** in Godot 4.3+.
+2. On Clock In (or at the desk): click **Settings** (top-right) or press **Esc**.
+3. Toggle **Second window**.
+4. **One monitor:** the display picker is disabled with a note; the KB window opens **offset** on the same screen so both stay usable.
+5. **Two+ monitors:** use **Target display** to choose which screen hosts the KB window (Godot `DisplayServer` screen list). The window centers on that screen.
+6. Toggle off (or close the KB window’s title-bar X) → second window closes; preference persists in `user://settings.cfg`.
+7. Restart the game with the toggle still on → KB window should reopen on the saved display.
+
+### What you should see on the second window
+
+- Header: Northwave Knowledge Base, live phase / stress / score
+- Left: live ticket mirror (id, caller, subject) synced from the desk
+- Right: Password Purge SOP quick reference (read-only)
+
+Requires `display/window/subwindows/embed_subwindows=false` (already set) so Godot creates a real OS window, not an embedded sub-viewport.
+
 ## Known gaps for Phillip
 
 | Item | Status |
@@ -59,3 +81,4 @@ If a clip is missing, captions still show; OS TTS may speak if the host exposes 
 | Whisper / cloud STT | Next PR — needs plugin or API key policy |
 | Mic/camera OS permissions | Player must allow when opting in; game continues if denied |
 | Full 6-call shift | Still Day 2 |
+| Multi-monitor on some Linux/Wayland setups | Confirm screen indices / placement in your DE |
