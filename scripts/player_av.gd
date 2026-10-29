@@ -65,7 +65,7 @@ func set_mic_enabled(enabled: bool) -> void:
 func camera_available() -> bool:
 	if not ClassDB.class_exists("CameraServer"):
 		return false
-	CameraServer.set_monitoring_feeds(true)
+	_ensure_camera_monitoring()
 	return CameraServer.get_feed_count() > 0
 
 
@@ -77,12 +77,18 @@ func _mic_available() -> bool:
 	return true
 
 
+## monitoring_feeds landed after 4.2 — call dynamically so 4.1 can still parse this script.
+func _ensure_camera_monitoring() -> void:
+	if CameraServer.has_method("set_monitoring_feeds"):
+		CameraServer.call("set_monitoring_feeds", true)
+
+
 func _start_camera() -> void:
 	_stop_camera()
 	if not ClassDB.class_exists("CameraServer"):
 		camera_status_changed.emit(false, "CameraServer unavailable")
 		return
-	CameraServer.set_monitoring_feeds(true)
+	_ensure_camera_monitoring()
 	var count := CameraServer.get_feed_count()
 	if count <= 0:
 		camera_status_changed.emit(false, "No webcam — preview offline")
@@ -107,7 +113,6 @@ func _start_camera() -> void:
 
 func _stop_camera() -> void:
 	if _feed_active and _feed_id >= 0 and ClassDB.class_exists("CameraServer"):
-		var feed: CameraFeed = CameraServer.get_feed(_feed_id)
 		# get_feed expects index; fall back to iterating.
 		for i in CameraServer.get_feed_count():
 			var f: CameraFeed = CameraServer.get_feed(i)
