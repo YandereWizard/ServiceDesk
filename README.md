@@ -37,6 +37,7 @@ godot4 --path /path/to/ServiceDesk
 | Runtime TTS API keys | ❌ not used (by design) | Keep bake-time only |
 | Webcam preview (CameraServer, opt-in) | ✅ scaffold | OS permission on player machine |
 | Mic push-to-talk record (opt-in) | ✅ scaffold | Real STT |
+| Second window / dual display (KB + ticket mirror) | ✅ | Persist + screen picker |
 | Name via speech-to-text | Stub (typed fallback always) | Whisper.cpp / cloud STT + keys or offline model |
 | Full 6-call shift | ❌ | Day 2 content |
 
@@ -68,7 +69,8 @@ Details: `audio/calls/password_purge/README.md`.
 ```
 project.godot
 scenes/                 # main, shift_start, desk_hud
-scripts/                # game_state, desk_hud, call_voice, player_av
+scripts/                # game_state, desk_hud, call_voice, player_av,
+                        # user_settings, second_display, settings_panel
 data/calls/             # JSON call graphs (+ line_id for VO)
 audio/calls/<id>/       # baked OGG/WAV per line_id
 tools/generate_call_tts.py
@@ -82,3 +84,4 @@ PLAYTEST.md
 - Stress at 100 ends the shift (manager override).
 - Decline twice forces the call onto your headset (with stress).
 - Camera/mic toggles are optional — play fully without them.
+- **Second window:** Settings (or Esc) → toggle **Second window**. With two monitors, pick the target display; with one, the KB window opens offset on the same screen. Setting is saved to `user://settings.cfg`.
