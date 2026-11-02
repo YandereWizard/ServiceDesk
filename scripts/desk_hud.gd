@@ -314,7 +314,8 @@ func _enter_diagnose() -> void:
 	_set_dialogue(str(diag.get("prompt", "What's going on?")))
 	_clear_container(_choices)
 	_choices.visible = true
-	for choice: Variant in diag.get("choices", []):
+	# Untyped for-loop: typed `for x: Type in` needs Godot 4.2+.
+	for choice in diag.get("choices", []):
 		if typeof(choice) != TYPE_DICTIONARY:
 			continue
 		var c: Dictionary = choice
@@ -1133,7 +1134,7 @@ func _format_clock(seconds: float) -> String:
 func _on_stress_changed(value: float) -> void:
 	_stress_bar.value = value
 	_stress_label.text = "Stress %d" % int(value)
-	var fill := _stress_bar.get_theme_stylebox("fill") as StyleBoxFlat
+	var fill: StyleBoxFlat = _stress_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	if fill:
 		if value >= 80.0:
 			fill.bg_color = DANGER
